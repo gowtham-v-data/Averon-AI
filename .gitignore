@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+backend/__pycache__/
+backend/*.pyc
+
+# Environment variables
+.env
+backend/.env
+
+# Build outputs
+frontend/dist/
+frontend/build/
+
+# IDE settings
+.vscode/
+.idea/
+.DS_Store
+git_push.bat
+git_push.ps1
