@@ -1,8 +1,8 @@
-/* ═══════════════════════════════════════════════════════
-   AVERON AI — Claude-Inspired Warm Light Theme
-   ═══════════════════════════════════════════════════════ */
+﻿/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   AVERON AI â€” Claude-Inspired Warm Light Theme
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* ─── CSS Variables ─────────────────────────────────── */
+/* â”€â”€â”€ CSS Variables â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 :root {
     --bg-page: #faf6f1;
     --bg-sidebar: #f5efe8;
@@ -46,7 +46,7 @@
     --sidebar-width: 240px;
 }
 
-/* ─── Reset & Base ──────────────────────────────────── */
+/* â”€â”€â”€ Reset & Base â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 *,
 *::before,
 *::after {
@@ -97,7 +97,7 @@ body {
     background: var(--text-tertiary);
 }
 
-/* ─── App Layout ────────────────────────────────────── */
+/* â”€â”€â”€ App Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .app-layout {
     display: flex;
     width: 100%;
@@ -105,9 +105,9 @@ body {
     overflow: hidden;
 }
 
-/* ═══════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    SIDEBAR
-   ═══════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .sidebar {
     width: var(--sidebar-width);
     min-width: var(--sidebar-width);
@@ -178,7 +178,7 @@ body {
     color: var(--accent);
 }
 
-/* ─── Knowledge Base Section ─────────────────────── */
+/* â”€â”€â”€ Knowledge Base Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .sidebar-section {
     padding: 0 18px;
     flex: 1;
@@ -305,7 +305,7 @@ body {
     font-size: 13px;
 }
 
-/* ─── Sidebar Footer (Voice Toggles) ─────────────── */
+/* â”€â”€â”€ Sidebar Footer (Voice Toggles) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .sidebar-footer {
     padding: 14px 18px;
     border-top: 1px solid var(--border);
@@ -366,9 +366,9 @@ body {
     transform: translateX(18px);
 }
 
-/* ═══════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN CHAT AREA
-   ═══════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .main-area {
     flex: 1;
     display: flex;
@@ -379,7 +379,7 @@ body {
     overflow: hidden;
 }
 
-/* ─── Header ────────────────────────────────────────── */
+/* â”€â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .main-header {
     display: flex;
     align-items: center;
@@ -452,7 +452,7 @@ body {
     color: var(--text-tertiary);
 }
 
-/* ─── Chat Container ────────────────────────────────── */
+/* â”€â”€â”€ Chat Container â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .chat-container {
     flex: 1;
     overflow-y: auto;
@@ -471,7 +471,7 @@ body {
     gap: 22px;
 }
 
-/* ─── Welcome Screen ────────────────────────────────── */
+/* â”€â”€â”€ Welcome Screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .welcome-screen {
     display: flex;
     flex-direction: column;
@@ -540,11 +540,11 @@ body {
     transform: translateY(-1px);
 }
 
-/* ═══════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MESSAGES
-   ═══════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* ─── User Message (Right-aligned bubble) ───────────── */
+/* â”€â”€â”€ User Message (Right-aligned bubble) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .message.user {
     display: flex;
     justify-content: flex-end;
@@ -562,7 +562,7 @@ body {
     color: var(--text-primary);
 }
 
-/* ─── Assistant Message (Left-aligned with avatar) ──── */
+/* â”€â”€â”€ Assistant Message (Left-aligned with avatar) â”€â”€â”€â”€ */
 .message.assistant {
     display: flex;
     gap: 12px;
@@ -692,7 +692,7 @@ body {
     color: var(--accent);
 }
 
-/* ─── Typing Indicator ──────────────────────────────── */
+/* â”€â”€â”€ Typing Indicator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .typing-indicator {
     display: flex;
     gap: 4px;
@@ -715,9 +715,9 @@ body {
     animation-delay: 0.4s;
 }
 
-/* ═══════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    INPUT AREA
-   ═══════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .input-area {
     position: absolute;
     bottom: 0;
@@ -858,12 +858,12 @@ body {
     text-decoration: underline;
 }
 
-/* ─── File Upload ───────────────────────────────────── */
+/* â”€â”€â”€ File Upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .file-upload-input {
     display: none;
 }
 
-/* ─── Website Builder Preview ───────────────────────── */
+/* â”€â”€â”€ Website Builder Preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .builder-preview {
     margin-top: 12px;
     border: 1px solid var(--border);
@@ -946,9 +946,9 @@ body {
     background: var(--accent-subtle);
 }
 
-/* ═══════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    ANIMATIONS
-   ═══════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -1002,6 +1002,168 @@ body {
     }
 }
 
+/* ─── Website Builder ───────────────────────────── */
+.builder-container {
+    margin-top: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-input);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    animation: fadeInUp 0.4s ease-out;
+}
+
+.builder-header {
+    background: var(--bg-sidebar);
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.builder-tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.builder-tab {
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.builder-tab:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.builder-tab.active {
+    background: var(--white);
+    color: var(--accent);
+    box-shadow: var(--shadow-sm);
+}
+
+.builder-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.builder-action-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--white);
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.builder-action-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+/* Code View */
+.builder-code-view {
+    display: flex;
+    height: 400px;
+}
+
+.builder-file-explorer {
+    width: 160px;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+}
+
+.file-tab {
+    text-align: left;
+    padding: 6px 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: var(--transition-fast);
+}
+
+.file-tab:hover {
+    background: var(--bg-hover);
+}
+
+.file-tab.active {
+    background: var(--bg-active);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.builder-code-content {
+    flex: 1;
+    background: #1e1e1e;
+    /* Dark theme for code */
+    padding: 16px;
+    overflow: auto;
+}
+
+.builder-code-content pre {
+    margin: 0;
+}
+
+.builder-code-content code {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    color: #d4d4d4;
+    line-height: 1.5;
+    white-space: pre;
+}
+
+/* Preview View */
+.builder-preview-view {
+    display: flex;
+    flex-direction: column;
+}
+
+.builder-iframe {
+    width: 100%;
+    height: 500px;
+    border: none;
+    background: white;
+}
+
+.builder-files-status {
+    padding: 8px 12px;
+    background: var(--bg-sidebar);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-top: 1px solid var(--border);
+}
+
+.builder-file-tag {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    background: var(--bg-active);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+}
+
 /* Loading spinner */
 .spinner {
     width: 14px;
@@ -1013,9 +1175,9 @@ body {
     display: inline-block;
 }
 
-/* ═══════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    RESPONSIVE
-   ═══════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 @media (max-width: 768px) {
     .sidebar {
         position: fixed;
@@ -1065,7 +1227,7 @@ body {
     display: block;
 }
 
-/* ─── Markdown extras ───────────────────────────────── */
+/* â”€â”€â”€ Markdown extras â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .message-text table {
     border-collapse: collapse;
     width: 100%;
@@ -1110,4 +1272,25 @@ body {
 
 .message-text h3 {
     font-size: 15px;
+}
+
+/* Loading spinner */
+.spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }

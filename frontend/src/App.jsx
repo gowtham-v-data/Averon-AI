@@ -4,6 +4,26 @@ import './index.css';
 
 const API_BASE = 'http://127.0.0.1:8000';
 
+function stripMarkdown(text) {
+    if (!text) return '';
+    let plain = text;
+    // Remove code blocks
+    plain = plain.replace(/```[\s\S]*?```/g, '');
+    // Remove inline code
+    plain = plain.replace(/`([^`]+)`/g, '$1');
+    // Remove bold/italics
+    plain = plain.replace(/\*\*?(.+?)\*\*?/g, '$1');
+    // Remove headers
+    plain = plain.replace(/^#+ (.+)$/gm, '$1');
+    // Remove links
+    plain = plain.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1');
+    // Remove list markers
+    plain = plain.replace(/^[*-] /gm, '');
+    plain = plain.replace(/^\d+\. /gm, '');
+    // Remove extra whitespace
+    return plain.trim();
+}
+
 // ─── Simple Markdown Parser ──────────────────────────
 function parseMarkdown(text) {
     if (!text) return '';
@@ -58,11 +78,15 @@ export default function App() {
     const [voiceResponse, setVoiceResponse] = useState(false);
     const [autoSendVoice, setAutoSendVoice] = useState(true);
     const [isListening, setIsListening] = useState(false);
+    const [speakingIndex, setSpeakingIndex] = useState(null);
+    const [ttsLoading, setTtsLoading] = useState(null); // msg index
+    const [builderStates, setBuilderStates] = useState({}); // { msgIndex: { mode: 'preview', fileIndex: 0 } }
 
     const chatEndRef = useRef(null);
     const textareaRef = useRef(null);
     const fileInputRef = useRef(null);
     const recognitionRef = useRef(null);
+    const audioRef = useRef(null);
 
     // Scroll to bottom
     useEffect(() => {
@@ -77,53 +101,76 @@ export default function App() {
         }
     }, [input]);
 
-    // Fetch files on mount
-    useEffect(() => {
-        fetchFiles();
-    }, []);
-
-    // ─── Voice Recognition Setup ─────────────────────
-    useEffect(() => {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) return;
-
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'en-US';
-        recognition.interimResults = false;
-        recognition.continuous = false;
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            setInput(prev => {
-                const newText = prev ? prev + ' ' + transcript : transcript;
-                // Auto-send if toggle is on
-                if (autoSendVoice) {
-                    setTimeout(() => sendMessage(newText), 100);
-                }
-                return newText;
-            });
-            setIsListening(false);
-        };
-
-        recognition.onerror = () => {
-            setIsListening(false);
-        };
-
-        recognition.onend = () => {
-            setIsListening(false);
-        };
-
-        recognitionRef.current = recognition;
-    }, [autoSendVoice]);
-
-    const fetchFiles = async () => {
+    const fetchFiles = useCallback(async () => {
         try {
             const res = await axios.get(`${API_BASE}/files`);
             setUploadedFiles(res.data.files || []);
         } catch (err) {
             console.error('Failed to fetch files:', err);
         }
-    };
+    }, []);
+
+    // ─── TTS ───────────────────────────────────────────
+    const handleTTS = useCallback(async (text, index) => {
+        if (!text) return;
+
+        // If clicking the same message that is already playing, stop it
+        if (speakingIndex === index && audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current = null;
+            setSpeakingIndex(null);
+            return;
+        }
+
+        // Stop any currently playing audio
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current = null;
+        }
+
+        try {
+            setTtsLoading(index);
+            const cleanText = stripMarkdown(text);
+            const res = await axios.post(`${API_BASE}/tts`, { text: cleanText }, { responseType: 'blob' });
+
+            // Check if we got an error instead of audio (blob might contain JSON error)
+            if (res.data.type === 'application/json') {
+                const textError = await res.data.text();
+                const errorObj = JSON.parse(textError);
+                throw new Error(errorObj.error || 'TTS generation failed');
+            }
+
+            const audioBlob = new Blob([res.data], { type: 'audio/mpeg' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            audioRef.current = audio;
+
+            // Handle browser play restrictions
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    setSpeakingIndex(index);
+                    setTtsLoading(null);
+                }).catch(error => {
+                    console.warn('TTS Playback blocked:', error);
+                    // Chrome and some browsers block auto-play until a direct interaction
+                    alert("Click anywhere on the page first to enable audio, then try again.");
+                    setSpeakingIndex(null);
+                    setTtsLoading(null);
+                });
+            }
+
+            audio.onended = () => {
+                URL.revokeObjectURL(audioUrl);
+                setSpeakingIndex(null);
+                audioRef.current = null;
+            };
+        } catch (err) {
+            console.error('TTS error:', err);
+            setTtsLoading(null);
+            setSpeakingIndex(null);
+        }
+    }, [speakingIndex]);
 
     // ─── Send Message ──────────────────────────────────
     const sendMessage = useCallback(async (msgText) => {
@@ -152,7 +199,7 @@ export default function App() {
 
                 // Auto TTS if voice response enabled
                 if (voiceResponse && res.data.reply) {
-                    handleTTS(res.data.reply);
+                    handleTTS(res.data.reply, messages.length + 1);
                 }
             }
         } catch (err) {
@@ -164,7 +211,54 @@ export default function App() {
         } finally {
             setLoading(false);
         }
-    }, [input, loading, voiceResponse]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [input, loading, voiceResponse, messages.length]);
+
+    // Fetch files on mount
+    useEffect(() => {
+        fetchFiles();
+    }, [fetchFiles]);
+
+    const autoSendVoiceRef = useRef(autoSendVoice);
+    useEffect(() => {
+        autoSendVoiceRef.current = autoSendVoice;
+    }, [autoSendVoice]);
+
+    // ─── Voice Recognition Setup ─────────────────────
+    useEffect(() => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return;
+
+        if (!recognitionRef.current) {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.continuous = false;
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                setInput(prev => {
+                    const newText = prev ? prev + ' ' + transcript : transcript;
+                    if (autoSendVoiceRef.current) {
+                        setTimeout(() => sendMessage(newText), 100);
+                    }
+                    return newText;
+                });
+                setIsListening(false);
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                setIsListening(false);
+            };
+
+            recognition.onend = () => {
+                setIsListening(false);
+            };
+
+            recognitionRef.current = recognition;
+        }
+    }, [sendMessage]);
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -199,22 +293,11 @@ export default function App() {
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
-    // ─── TTS ───────────────────────────────────────────
-    const handleTTS = async (text) => {
-        try {
-            const res = await axios.post(`${API_BASE}/tts`, { text }, { responseType: 'blob' });
-            const audio = new Audio(URL.createObjectURL(res.data));
-            audio.play();
-        } catch (err) {
-            console.error('TTS error:', err);
-        }
-    };
-
     const handleCopy = (text) => navigator.clipboard.writeText(text);
 
     // ─── New Chat ──────────────────────────────────────
     const handleNewChat = async () => {
-        try { await axios.post(`${API_BASE}/clear-chat`); } catch { }
+        try { await axios.post(`${API_BASE}/clear-chat`); } catch { /* Ignore errors */ }
         setMessages([]);
         setSidebarOpen(false);
     };
@@ -224,10 +307,24 @@ export default function App() {
         try {
             await axios.post(`${API_BASE}/clear-docs`);
             setUploadedFiles([]);
-        } catch { }
+        } catch { /* Ignore errors */ }
     };
 
     // ─── Builder Helpers ───────────────────────────────
+    const setBuilderMode = (msgIndex, mode) => {
+        setBuilderStates(prev => ({
+            ...prev,
+            [msgIndex]: { ...prev[msgIndex], mode }
+        }));
+    };
+
+    const setBuilderFile = (msgIndex, fileIndex) => {
+        setBuilderStates(prev => ({
+            ...prev,
+            [msgIndex]: { ...prev[msgIndex], fileIndex }
+        }));
+    };
+
     const downloadBuilderFiles = (files) => {
         files.forEach((f) => {
             const blob = new Blob([f.content], { type: 'text/plain' });
@@ -241,12 +338,32 @@ export default function App() {
     const getBuilderPreviewSrc = (builderFiles) => {
         const htmlFile = builderFiles.find(f => f.name === 'index.html');
         if (!htmlFile) return '';
-        let html = htmlFile.content;
-        const cssFile = builderFiles.find(f => f.name === 'style.css');
-        const jsFile = builderFiles.find(f => f.name === 'script.js');
-        if (cssFile) html = html.replace('</head>', `<style>${cssFile.content}</style></head>`);
-        if (jsFile) html = html.replace('</body>', `<script>${jsFile.content}<\/script></body>`);
-        return 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+
+        let htmlContent = htmlFile.content;
+
+        // Find style and script files
+        const styleFile = builderFiles.find(f => f.name.includes('.css') || f.name === 'style.css');
+        const scriptFile = builderFiles.find(f => f.name.includes('.js') || f.name === 'script.js');
+
+        // Inject CSS if found and doesn't already have it
+        if (styleFile && !htmlContent.includes(`<style>${styleFile.content}`)) {
+            if (htmlContent.includes('</head>')) {
+                htmlContent = htmlContent.replace('</head>', `<style>\n${styleFile.content}\n</style>\n</head>`);
+            } else {
+                htmlContent = `<style>\n${styleFile.content}\n</style>\n` + htmlContent;
+            }
+        }
+
+        // Inject JS if found
+        if (scriptFile && !htmlContent.includes(`<script>${scriptFile.content}`)) {
+            if (htmlContent.includes('</body>')) {
+                htmlContent = htmlContent.replace('</body>', `<script>\n${scriptFile.content}\n</script>\n</body>`);
+            } else {
+                htmlContent = htmlContent + `\n<script>\n${scriptFile.content}\n</script>`;
+            }
+        }
+
+        return 'data:text/html;charset=utf-8,' + encodeURIComponent(htmlContent);
     };
 
     const formatDate = (dateStr) => {
@@ -404,31 +521,69 @@ export default function App() {
                                                 dangerouslySetInnerHTML={{ __html: parseMarkdown(msg.content) }}
                                             />
 
-                                            {/* Builder preview */}
+                                            {/* Builder Block */}
                                             {msg.builder && (
-                                                <div className="builder-preview">
+                                                <div className="builder-container">
                                                     <div className="builder-header">
-                                                        <span>🌐 Website Preview</span>
+                                                        <div className="builder-tabs">
+                                                            <button
+                                                                className={`builder-tab ${builderStates[i]?.mode !== 'code' ? 'active' : ''}`}
+                                                                onClick={() => setBuilderMode(i, 'preview')}
+                                                            >
+                                                                🌐 Preview
+                                                            </button>
+                                                            <button
+                                                                className={`builder-tab ${builderStates[i]?.mode === 'code' ? 'active' : ''}`}
+                                                                onClick={() => setBuilderMode(i, 'code')}
+                                                            >
+                                                                📄 View Code
+                                                            </button>
+                                                        </div>
                                                         <div className="builder-actions">
                                                             <button
                                                                 className="builder-action-btn"
                                                                 onClick={() => downloadBuilderFiles(msg.builder.files)}
+                                                                title="Download all files"
                                                             >
                                                                 ⬇ Download
                                                             </button>
                                                         </div>
                                                     </div>
-                                                    <iframe
-                                                        className="builder-iframe"
-                                                        src={getBuilderPreviewSrc(msg.builder.files)}
-                                                        title="Website Preview"
-                                                        sandbox="allow-scripts"
-                                                    />
-                                                    <div className="builder-files">
-                                                        {msg.builder.files.map((f, j) => (
-                                                            <span key={j} className="builder-file-tab">{f.name}</span>
-                                                        ))}
-                                                    </div>
+
+                                                    {builderStates[i]?.mode === 'code' ? (
+                                                        <div className="builder-code-view">
+                                                            <div className="builder-file-explorer">
+                                                                {msg.builder.files.map((f, j) => (
+                                                                    <button
+                                                                        key={j}
+                                                                        className={`file-tab ${(builderStates[i]?.fileIndex || 0) === j ? 'active' : ''}`}
+                                                                        onClick={() => setBuilderFile(i, j)}
+                                                                    >
+                                                                        {f.name}
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                            <div className="builder-code-content">
+                                                                <pre>
+                                                                    <code>{msg.builder.files[builderStates[i]?.fileIndex || 0]?.content}</code>
+                                                                </pre>
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="builder-preview-view">
+                                                            <iframe
+                                                                className="builder-iframe"
+                                                                src={getBuilderPreviewSrc(msg.builder.files)}
+                                                                title="Website Preview"
+                                                                sandbox="allow-scripts"
+                                                            />
+                                                            <div className="builder-files-status">
+                                                                {msg.builder.files.map((f, j) => (
+                                                                    <span key={j} className="builder-file-tag">{f.name}</span>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             )}
 
@@ -437,8 +592,13 @@ export default function App() {
                                                 <button className="msg-action-btn" onClick={() => handleCopy(msg.content)} title="Copy">
                                                     📋
                                                 </button>
-                                                <button className="msg-action-btn" onClick={() => handleTTS(msg.content)} title="Read aloud">
-                                                    🔊
+                                                <button
+                                                    className={`msg-action-btn ${speakingIndex === i ? 'speaking' : ''} ${ttsLoading === i ? 'loading' : ''}`}
+                                                    onClick={() => handleTTS(msg.content, i)}
+                                                    title={speakingIndex === i ? "Stop speaking" : "Read aloud"}
+                                                    disabled={ttsLoading === i}
+                                                >
+                                                    {ttsLoading === i ? <span className="spinner" /> : (speakingIndex === i ? '⏹' : '🔊')}
                                                 </button>
                                             </div>
                                         </div>
