@@ -1,0 +1,11 @@
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+pydantic==2.9.2
+sqlalchemy==2.0.36
+python-dotenv==1.0.1
+pinecone-client==5.0.1
+sentence-transformers==3.2.1
+pypdf==5.1.0
+requests==2.32.3
+gtts==2.5.3
+psycopg2-binary==2.9.10
